@@ -1,16 +1,25 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
 
 import { logger } from "@/lib/observability/logger";
 import { rateLimitByIp } from "@/lib/security/rate-limit";
 
 const protectedPrefixes = ["/account"];
+const sessionCookieNames = [
+  "__Secure-next-auth.session-token",
+  "next-auth.session-token",
+  "__Secure-authjs.session-token",
+  "authjs.session-token",
+];
 
 function isProtectedPath(pathname: string) {
   return protectedPrefixes.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
+}
+
+function hasSessionCookie(request: NextRequest) {
+  return sessionCookieNames.some((name) => request.cookies.has(name));
 }
 
 function contentSecurityPolicy() {
@@ -61,12 +70,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isProtectedPath(request.nextUrl.pathname)) {
-    const token = await getToken({
-      req: request,
-      secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
-    });
-
-    if (!token) {
+    if (!hasSessionCookie(request)) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
 
@@ -87,5 +91,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+  matcher: [
+    "/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };

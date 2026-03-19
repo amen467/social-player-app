@@ -27,7 +27,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     <section className="mx-auto w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
       <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Sign in</h1>
       <p className="mt-2 text-sm text-slate-600">
-        Use GitHub OAuth to create your account or continue with an existing one.
+        Use Google OAuth to create your account or continue with an existing one.
       </p>
 
       <div className="mt-6">

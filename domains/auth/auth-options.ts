@@ -1,13 +1,17 @@
 import type { NextAuthOptions } from "next-auth";
-import GitHubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
 import { createAuditLog } from "@/domains/audit/service";
 import { prisma } from "@/lib/db/prisma";
 
-const githubClientId = process.env.AUTH_GITHUB_ID ?? process.env.GITHUB_ID ?? "";
-const githubClientSecret =
-  process.env.AUTH_GITHUB_SECRET ?? process.env.GITHUB_SECRET ?? "";
+const googleClientId =
+  process.env.AUTH_GOOGLE_ID ?? process.env.GOOGLE_CLIENT_ID ?? process.env.GOOGLE_ID ?? "";
+const googleClientSecret =
+  process.env.AUTH_GOOGLE_SECRET ??
+  process.env.GOOGLE_CLIENT_SECRET ??
+  process.env.GOOGLE_SECRET ??
+  "";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -19,9 +23,9 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   providers: [
-    GitHubProvider({
-      clientId: githubClientId,
-      clientSecret: githubClientSecret,
+    GoogleProvider({
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
     }),
   ],
   callbacks: {

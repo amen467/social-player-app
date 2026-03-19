@@ -17,11 +17,11 @@ export function SignInButton({ callbackUrl }: SignInButtonProps) {
       disabled={isPending}
       onClick={() => {
         startTransition(() => {
-          void signIn("github", { callbackUrl });
+          void signIn("google", { callbackUrl });
         });
       }}
     >
-      {isPending ? "Redirecting..." : "Continue with GitHub"}
+      {isPending ? "Redirecting..." : "Continue with Google"}
     </button>
   );
 }
